@@ -17,7 +17,6 @@
   <body>
     @component('components.nav-bar')
     @endcomponent
-    <h1>All Projects</h1>
     @yield('content')
     <script
   type="text/javascript"

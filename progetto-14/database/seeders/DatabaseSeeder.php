@@ -13,12 +13,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Creazione di un utente admin
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('Pa$$w0rd!')
+        User::factory(1)->create([
+            'password' => Hash::make('Pa$$w0rd!') 
         ]);
+
+        for ($i = 0; $i < 20; $i++) {
+            User::factory()->create([
+                'password' => Hash::make('Pa$$w0rd!') 
+            ]);
+        }
 
         // Esecuzione dei seeders per le altre tabelle
         $this->call([

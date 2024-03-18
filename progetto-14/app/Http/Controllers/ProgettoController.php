@@ -5,6 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Progetto;
 use App\Http\Requests\StoreProgettoRequest;
 use App\Http\Requests\UpdateProgettoRequest;
+use App\Models\Ambiente;
+use App\Models\Language;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProgettoController extends Controller
 {
@@ -13,7 +19,7 @@ class ProgettoController extends Controller
      */
     public function index()
 {
-    $projects = Progetto::orderBy('id')->get();
+    $projects = Progetto::orderBy('id')->with('languages', 'ambientes', 'users')->get();
     return view('project', ['projects' => $projects]);
 }
 
@@ -23,7 +29,9 @@ class ProgettoController extends Controller
      */
     public function create()
     {
-        //
+        $languages = Language::all();
+        $environment = Ambiente::all();
+    return view('newprogetto', ['languages' => $languages, 'ambientes'=> $environment, 'users'=> User::get()]);
     }
 
     /**
@@ -31,15 +39,23 @@ class ProgettoController extends Controller
      */
     public function store(StoreProgettoRequest $request)
     {
-        //
+        $data = $request->only(['title', 'description', 'language_id', 'environment_id', 'budget']);
+        $data['status'] = 'In Progress';
+        $data['team_id'] = Auth::user()->id;
+        $data['created_at'] = Carbon::now();
+
+        Progetto::create($data);
+        return redirect()->action([ProgettoController::class, 'index']);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Progetto $progetto)
+    public function show(Progetto $project)
     {
-        //
+        $attivita = $project->attivitas()->get();
+
+        return view('project_detail', ['project' => $project, 'attivitas' => $attivita]);
     }
 
     /**
@@ -63,6 +79,7 @@ class ProgettoController extends Controller
      */
     public function destroy(Progetto $progetto)
     {
-        //
+        $progetto->delete();
+        return redirect('/projects');
     }
 }

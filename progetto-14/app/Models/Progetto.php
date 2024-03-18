@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Progetto extends Model
 {
+    protected $fillable = ['title', 'description', 'language_id', 'environment_id', 'team_id', 'status', 'budget'];
     public function ambientes(): BelongsTo
     {
         return $this->belongsTo(Ambiente::class, 'environment_id');
